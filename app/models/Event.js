@@ -71,6 +71,11 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Agenda'
     },
+    discordServer:
+        {
+            type: String,
+            // required: true,
+        },
     problemChannel:
         {
             type: String,
