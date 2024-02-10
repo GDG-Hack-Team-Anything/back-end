@@ -16,6 +16,7 @@ async function checkGitHubRepositoryAccessibility(url) {
 }
 
 const githubUrls = [
+    'https://github.com/GDG-Hack-Team-Anything',
     'https://github.com/bouzenaali/bouzenaali',
     'https://github.com/bouzenaali/cookiecutter-django',
     'https://github.com/bouzenaali/git-github-gdsc-meetup'
