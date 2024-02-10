@@ -8,4 +8,6 @@ Welcome to the SWEEVENT backend repository! This repository contains the backend
 - **Participant Management API**
 - **Judging and Evaluation API**
 - **Event Management API**
+- **URL Verification API**
 - **Integration with Discord Bot**
+- **Automated participant registrations API**
