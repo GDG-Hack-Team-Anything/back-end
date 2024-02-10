@@ -6,7 +6,7 @@ const { requireAdmin } = require('../middleware/adminMiddleware');
 const router = Router();
 
 
-router.get('/get/events', eventController.getEvents);
+router.get('/events/get', eventController.getEvents);
 router.post('/event/create', eventController.createEvent);
 router.get('/event/get/:id', eventController.getEvent);
 router.put('/event/update/:id', eventController.updateEvent);

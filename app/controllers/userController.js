@@ -4,7 +4,7 @@ const User = require('../models/User') ;
 //get all users of the platform
 module.exports.getAllUsers = async (req, res) =>{
     try{
-        const users = await User.find().populate('position').populate('zone');
+        const users = await User.find().populate('firstName').populate('lastName').populate('role');
         res.status(200).send(users);
     }catch(err){
         console.log("fetch failed");

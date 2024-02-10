@@ -9,10 +9,6 @@ const activitySchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    agenda: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Agenda'
-    },
 }, {
     timestamps: true
 });

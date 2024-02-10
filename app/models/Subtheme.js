@@ -17,6 +17,6 @@ const subthemeSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Subtheme = mongoose.model('Team', subthemeSchema);
+const Subtheme = mongoose.model('Subtheme', subthemeSchema);
 
 module.exports = Subtheme;

@@ -7,15 +7,15 @@ const eventSchema = new mongoose.Schema({
     },
     startDate: {
         type: Date,
-        required: true,
+        // required: true,
     },
     endDate: {
         type: Date,
-        required: true,
+        // required: true,
     },
     location: {
         type: String,
-        required: true,
+        // required: true,
     },
     description: {
         type: String,
@@ -23,7 +23,7 @@ const eventSchema = new mongoose.Schema({
     },
     detailledDescription: {
         type: String,
-        required: true,
+        // required: true,
     },
     state:{
         type: String,
@@ -31,12 +31,12 @@ const eventSchema = new mongoose.Schema({
     },
     theme: {
         type: String,
-        required: true,
+        // required: true,
     },
     subthemes: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            required: true,
+            // required: true,
         }
     ],
     judges: [{
@@ -63,14 +63,23 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    submissionForm:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'SubmissionForm'
+    submissionForm: {
+        fields: [{
+            type: String,
+            // required: true,
+        }],
+        isOpen: {
+            type: Boolean,
+        }
     },
-    agenda:{
+    submissions:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Agenda'
-    },
+        ref: 'Submission'
+    }],
+    agenda:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Activity'
+    }],
     discordServer:
         {
             type: String,

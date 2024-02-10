@@ -10,13 +10,13 @@ router.post('/create/judge', userController.createJudge);
 router.post('/create/participant', userController.createParticipant);
 router.post('/create/company', userController.createCompany);
 
-router.get('/get/admins', userController.getAdmins);
-router.get('/get/judges', userController.getJudges);
-router.get('/get/participants', userController.getParticipants);
-router.get('/get/companys', userController.getCompanies);
+router.get('/admins/get', userController.getAdmins);
+router.get('/judges/get', userController.getJudges);
+router.get('/participants/get', userController.getParticipants);
+router.get('/companys/get', userController.getCompanies);
 
-router.get('/get/allUsers', userController.getAllUsers);
-router.get('/get/eventUsers', userController.getEventUsers);
+router.get('/users/get', userController.getAllUsers);
+router.get('/eventUsers/get', userController.getEventUsers);
 
 router.post('/user/create', userController.createUser);
 router.get('/user/get/:id', userController.getUser);

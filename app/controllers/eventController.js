@@ -1,14 +1,5 @@
 const Event = require('../models/Event');
-const Team = require('../models/Team');
-const User = require('../models/User');
-const Submission = require('../models/Submission');
-const Feedback = require('../models/Feedback');
-const Notification = require('../models/Notification');
-const Agenda = require('../models/Agenda');
-const Activity = require('../models/Activity');
-const SubmissionForm = require('../models/SubmissionForm');
-const Judgement = require('../models/Judgement');
-const Mentor = require('../models/Mentor');
+
 
 // Create and Save a new Event
 
@@ -74,30 +65,28 @@ exports.updateEvent = (req, res) => {
         });
 }
 
+
 // Delete an event with the specified id in the request
 
 exports.deleteEvent = (req, res) => {
-    const id = req.params.id;
+    _id = req.params.id;
+    try{
+        const event = Event.findByIdAndDelete(_id);
+        if(event){
+            res.status(200).json({message: "Event deleted successfully"});
+            console.log("Event deleted successfully");
+        }else{
+            res.status(404).json({message: "Event not found"});
+            console.log("Event not found");
+        }
+    }
+    catch(err){
+        console.log("Event delete failed");
+        res.status(500).json({message: err.message});
+    }
 
-    Event.findByIdAndRemove(id)
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `Cannot delete Event with id=${id}. Maybe Event was not found!`
-                });
-            } else {
-                res.send({
-                    message: 'Event was deleted successfully!'
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: 'Could not delete Event with id=' + id
-            });
-        });
+}   
 
-}
 
 
 
