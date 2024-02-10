@@ -5,6 +5,8 @@ const Submission = require('../models/Submission');
 const Team = require('../models/Team');
 const User = require('../models/User');
 
+const { checkGitHubRepositoryAccessibility, checkFigmaFileAccessibility } = require('../utils/validateURL');
+
 
 
 //get all fields
@@ -111,42 +113,63 @@ exports.getSubmission = async (req, res) => {
     }
 }
 
-//create a new submission
+// create a new submission
+
 
 exports.createSubmission = async (req, res) => {
     try {
         const { eventId, teamId, fields } = req.body;
 
-        // Validate input data if necessary
+        // Retrieve all field IDs
+        const fieldIds = fields.map(field => field.fieldId);
 
-        // Create a new submission document
-        const submission = new Submission({
-            event: eventId,
-            team: teamId,
-            fields: fields.map(field => ({
-                field: field.fieldId,
-                value: field.value
-            }))
-        });
+        // Retrieve names of all fields asynchronously
+        const fieldNames = await Promise.all(fieldIds.map(async (fieldId) => {
+            const field = await Field.findById(fieldId);
+            return field.name;
+        }));
 
-        // Save the submission to the database
-        await submission.save();
+        // Find the index of the GitHub and Figma fields
+        const githubIndex = fieldNames.indexOf('github');
+        const figmaIndex = fieldNames.indexOf('figma');
 
-        const event = await Event.findById(eventId);
-        if (event) {
-            event.submissions.push(submission._id);
-            await event.save();
+        // Check if both GitHub and Figma fields are present
+        if (githubIndex !== -1 && figmaIndex !== -1) {
+            // Extract GitHub and Figma URLs
+            const githubUrl = fields.find((field, index) => index === githubIndex).value;
+            const figmaUrl = fields.find((field, index) => index === figmaIndex).value;
+
+
+        if (githubUrl) {
+        try {
+            isGithubPublic = await checkGitHubRepositoryAccessibility(githubUrl.value);
+        } catch (error) {
+            console.error(`Error checking GitHub repository accessibility for URL: ${githubUrl.value}`, error);
+            return res.status(500).json({ message: `Error checking GitHub repository accessibility for URL: ${githubUrl.value}` });
         }
+    }
 
-        const team = await Team.findById(teamId);
-        if (team) {
-            team.submission = submission._id;
-            await team.save();
+
+            // Create a new submission document
+            const submission = new Submission({
+                event: eventId,
+                team: teamId,
+                fields: fields.map(field => ({
+                    field: field.fieldId,
+                    value: field.value
+                }))
+            });
+
+            // Save the submission to the database
+            await submission.save();
+
+            // Update event or team if needed
+
+            res.status(201).json(submission);
+        } else {
+            // Either GitHub or Figma field is missing
+            res.status(400).json({ message: 'Both GitHub and Figma fields are required' });
         }
-
-        console.log("Submission created successfully");
-
-        res.status(201).json(submission);
     } catch (error) {
         console.error('Error creating submission:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -154,12 +177,24 @@ exports.createSubmission = async (req, res) => {
 };
 
 
-//update a submission
 
 exports.updateSubmission = async (req, res) => {
     try {
         const { submissionId } = req.params;
         const { fields } = req.body;
+
+        // Filter GitHub and Figma URLs
+        const githubUrls = fields.filter(field => field.name === 'github' && field.type === 'url').map(field => field.value);
+        const figmaUrls = fields.filter(field => field.name === 'figma' && field.type === 'url').map(field => field.value);
+
+        // Validate GitHub and Figma URLs
+        const githubResults = await Promise.all(githubUrls.map(url => checkGitHubRepositoryAccessibility(url)));
+        const figmaResults = await Promise.all(figmaUrls.map(url => checkFigmaFileAccessibility(url)));
+
+        // Check if any URL is invalid or private
+        if (githubResults.includes(false) || figmaResults.includes(false)) {
+            return res.status(400).json({ message: 'One or more URLs are invalid or private' });
+        }
 
         // Find the submission by ID
         let submission = await Submission.findById(submissionId);
@@ -182,6 +217,7 @@ exports.updateSubmission = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 //delete a submission
 
